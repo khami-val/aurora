@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aurora — Стихи</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Cinzel:wght@400;500&family=EB+Garamond:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --blush: #f5e6da;
+    --rose: #e8c4b0;
+    --gold: #c9a96e;
+    --deep-rose: #b07060;
+    --ivory: #fdf6ef;
+    --marble: #f0e8e0;
+    --mist: #e2d5c8;
+    --text: #4a3728;
+    --soft-text: #7a5c4a;
+  }
+
+  body {
+    background: var(--ivory);
+    font-family: 'EB Garamond', Georgia, serif;
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Декоративный фон */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse at 20% 10%, rgba(233,196,170,0.35) 0%, transparent 60%),
+      radial-gradient(ellipse at 85% 80%, rgba(201,169,110,0.2) 0%, transparent 55%),
+      radial-gradient(ellipse at 60% 40%, rgba(245,230,218,0.4) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* SVG орнаменты */
+  .ornament-top {
+    position: fixed;
+    top: 0; right: 0;
+    width: 220px; opacity: 0.18;
+    z-index: 0; pointer-events: none;
+  }
+  .ornament-bottom {
+    position: fixed;
+    bottom: 0; left: 0;
+    width: 180px; opacity: 0.15;
+    z-index: 0; pointer-events: none;
+    transform: rotate(180deg);
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 0 20px 60px;
+  }
+
+  /* Шапка */
+  header {
+    text-align: center;
+    padding: 52px 0 36px;
+    position: relative;
+  }
+
+  .header-laurel {
+    width: 160px;
+    margin: 0 auto 12px;
+    display: block;
+    opacity: 0.55;
+  }
+
+  header h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 2.6rem;
+    font-weight: 400;
+    letter-spacing: 0.22em;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  header .subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--deep-rose);
+    margin-top: 8px;
+    letter-spacing: 0.08em;
+    opacity: 0.85;
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 24px 0;
+    opacity: 0.5;
+  }
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold), transparent);
+  }
+  .divider span {
+    font-size: 0.9rem;
+    color: var(--gold);
+  }
+
+  /* Карточки стихов */
+  .poems-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .poem-card {
+    background: linear-gradient(135deg, rgba(253,246,239,0.95) 0%, rgba(240,232,224,0.9) 100%);
+    border: 1px solid rgba(201,169,110,0.3);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(74,55,40,0.08), 0 1px 4px rgba(201,169,110,0.15);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    position: relative;
+  }
+
+  .poem-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: linear-gradient(to bottom, var(--gold), var(--deep-rose), transparent);
+    opacity: 0.6;
+  }
+
+  .poem-card:hover {
+    box-shadow: 0 8px 36px rgba(74,55,40,0.13), 0 2px 8px rgba(201,169,110,0.2);
+  }
+
+  .poem-header {
+    padding: 20px 22px 16px 26px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+
+  .poem-title-wrap {
+    flex: 1;
+  }
+
+  .poem-number {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    margin-bottom: 4px;
+    opacity: 0.8;
+  }
+
+  .poem-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.3;
+  }
+
+  .poem-preview {
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    font-size: 0.85rem;
+    color: var(--soft-text);
+    margin-top: 4px;
+    opacity: 0.75;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 240px;
+  }
+
+  .toggle-btn {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    border: 1px solid rgba(201,169,110,0.4);
+    background: rgba(245,230,218,0.6);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.3s, transform 0.4s ease;
+    color: var(--gold);
+  }
+
+  .poem-card.open .toggle-btn {
+    background: rgba(201,169,110,0.2);
+    transform: rotate(180deg);
+  }
+
+  .poem-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.55s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+    opacity: 0;
+  }
+
+  .poem-card.open .poem-body {
+    max-height: 2000px;
+    opacity: 1;
+  }
+
+  .poem-text {
+    padding: 0 26px 24px 26px;
+    font-family: 'EB Garamond', serif;
+    font-size: 1.05rem;
+    line-height: 1.9;
+    color: var(--text);
+    white-space: pre-wrap;
+  }
+
+  .poem-text em {
+    font-style: italic;
+    color: var(--deep-rose);
+  }
+
+  .poem-separator {
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(201,169,110,0.3), transparent);
+    margin: 0 26px 20px;
+  }
+
+  /* Медальон Афродиты */
+  .aphrodite-medallion {
+    text-align: center;
+    margin: 40px 0 24px;
+  }
+
+  .aphrodite-medallion svg {
+    width: 90px;
+    height: 90px;
+    opacity: 0.4;
+  }
+
+  /* Подвал */
+  footer {
+    text-align: center;
+    padding-top: 32px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.85rem;
+    color: var(--soft-text);
+    opacity: 0.6;
+    letter-spacing: 0.05em;
+  }
+
+  /* Анимация появления */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .poem-card {
+    animation: fadeUp 0.5s ease both;
+  }
+  .poem-card:nth-child(1) { animation-delay: 0.1s; }
+  .poem-card:nth-child(2) { animation-delay: 0.2s; }
+  .poem-card:nth-child(3) { animation-delay: 0.3s; }
+  .poem-card:nth-child(4) { animation-delay: 0.4s; }
+  .poem-card:nth-child(5) { animation-delay: 0.5s; }
+  .poem-card:nth-child(6) { animation-delay: 0.6s; }
+  .poem-card:nth-child(7) { animation-delay: 0.7s; }
+  .poem-card:nth-child(8) { animation-delay: 0.8s; }
+  .poem-card:nth-child(9) { animation-delay: 0.9s; }
+</style>
+</head>
+<body>
+
+<!-- Декоративный SVG угол (ветка с лавром) -->
+<svg class="ornament-top" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" fill="none">
+  <path d="M200 10 C160 30, 120 60, 80 100 C50 130, 20 170, 10 210" stroke="#c9a96e" stroke-width="1.5"/>
+  <ellipse cx="175" cy="35" rx="18" ry="10" fill="#c9a96e" transform="rotate(-40 175 35)" opacity="0.7"/>
+  <ellipse cx="148" cy="58" rx="16" ry="9" fill="#c9a96e" transform="rotate(-50 148 58)" opacity="0.6"/>
+  <ellipse cx="120" cy="85" rx="15" ry="8" fill="#c9a96e" transform="rotate(-55 120 85)" opacity="0.5"/>
+  <ellipse cx="92" cy="115" rx="14" ry="8" fill="#c9a96e" transform="rotate(-60 92 115)" opacity="0.4"/>
+  <ellipse cx="65" cy="148" rx="13" ry="7" fill="#c9a96e" transform="rotate(-65 65 148)" opacity="0.3"/>
+  <ellipse cx="190" cy="28" rx="12" ry="7" fill="#e8c4b0" transform="rotate(-20 190 28)" opacity="0.5"/>
+  <ellipse cx="162" cy="50" rx="11" ry="6" fill="#e8c4b0" transform="rotate(-30 162 50)" opacity="0.4"/>
+  <ellipse cx="135" cy="75" rx="10" ry="6" fill="#e8c4b0" transform="rotate(-35 135 75)" opacity="0.35"/>
+</svg>
+
+<svg class="ornament-bottom" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" fill="none">
+  <path d="M200 10 C160 30, 120 60, 80 100 C50 130, 20 170, 10 210" stroke="#c9a96e" stroke-width="1.5"/>
+  <ellipse cx="175" cy="35" rx="18" ry="10" fill="#c9a96e" transform="rotate(-40 175 35)" opacity="0.7"/>
+  <ellipse cx="148" cy="58" rx="16" ry="9" fill="#c9a96e" transform="rotate(-50 148 58)" opacity="0.6"/>
+  <ellipse cx="120" cy="85" rx="15" ry="8" fill="#c9a96e" transform="rotate(-55 120 85)" opacity="0.5"/>
+  <ellipse cx="92" cy="115" rx="14" ry="8" fill="#c9a96e" transform="rotate(-60 92 115)" opacity="0.4"/>
+  <ellipse cx="65" cy="148" rx="13" ry="7" fill="#c9a96e" transform="rotate(-65 65 148)" opacity="0.3"/>
+</svg>
+
+<div class="container">
+  <header>
+    <!-- Лавровый венок SVG -->
+    <svg class="header-laurel" viewBox="0 0 320 80" xmlns="http://www.w3.org/2000/svg" fill="none">
+      <path d="M20 40 C60 20, 100 15, 160 12" stroke="#c9a96e" stroke-width="1.2"/>
+      <path d="M300 40 C260 20, 220 15, 160 12" stroke="#c9a96e" stroke-width="1.2"/>
+      <!-- левые листья -->
+      <ellipse cx="40" cy="35" rx="14" ry="7" fill="#c9a96e" transform="rotate(-30 40 35)" opacity="0.65"/>
+      <ellipse cx="65" cy="26" rx="13" ry="6" fill="#c9a96e" transform="rotate(-20 65 26)" opacity="0.6"/>
+      <ellipse cx="92" cy="20" rx="12" ry="6" fill="#c9a96e" transform="rotate(-10 92 20)" opacity="0.55"/>
+      <ellipse cx="120" cy="16" rx="11" ry="5" fill="#c9a96e" transform="rotate(-5 120 16)" opacity="0.5"/>
+      <!-- правые листья (зеркало) -->
+      <ellipse cx="280" cy="35" rx="14" ry="7" fill="#c9a96e" transform="rotate(30 280 35)" opacity="0.65"/>
+      <ellipse cx="255" cy="26" rx="13" ry="6" fill="#c9a96e" transform="rotate(20 255 26)" opacity="0.6"/>
+      <ellipse cx="228" cy="20" rx="12" ry="6" fill="#c9a96e" transform="rotate(10 228 20)" opacity="0.55"/>
+      <ellipse cx="200" cy="16" rx="11" ry="5" fill="#c9a96e" transform="rotate(5 200 16)" opacity="0.5"/>
+      <!-- звезда в центре -->
+      <circle cx="160" cy="12" r="5" fill="#c9a96e" opacity="0.7"/>
+      <circle cx="160" cy="12" r="2.5" fill="#f5e6da"/>
+    </svg>
+
+    <h1>AURORA</h1>
+    <p class="subtitle">Стихотворения души</p>
+  </header>
+
+  <div class="divider"><span>✦</span></div>
+
+  <div class="poems-list" id="poemsList"></div>
+
+  <!-- Медальон Афродиты -->
+  <div class="aphrodite-medallion">
+    <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" fill="none">
+      <circle cx="60" cy="60" r="55" stroke="#c9a96e" stroke-width="1" stroke-dasharray="4 3"/>
+      <circle cx="60" cy="60" r="48" stroke="#e8c4b0" stroke-width="0.8"/>
+      <!-- Стилизованная Афродита - силуэт -->
+      <ellipse cx="60" cy="40" rx="12" ry="14" fill="#c9a96e" opacity="0.4"/>
+      <path d="M48 54 Q60 58 72 54 L75 85 Q60 90 45 85 Z" fill="#c9a96e" opacity="0.35"/>
+      <!-- волосы -->
+      <path d="M50 32 Q48 22 55 18 Q60 15 65 18 Q72 22 70 32" stroke="#c9a96e" stroke-width="1.5" fill="#e8c4b0" opacity="0.5"/>
+      <!-- звёздочки -->
+      <circle cx="30" cy="60" r="2" fill="#c9a96e" opacity="0.5"/>
+      <circle cx="90" cy="60" r="2" fill="#c9a96e" opacity="0.5"/>
+      <circle cx="60" cy="105" r="2" fill="#c9a96e" opacity="0.4"/>
+      <circle cx="25" cy="80" r="1.5" fill="#c9a96e" opacity="0.35"/>
+      <circle cx="95" cy="80" r="1.5" fill="#c9a96e" opacity="0.35"/>
+    </svg>
+  </div>
+
+  <footer>Aurora · все права защищены · с любовью к словам</footer>
+</div>
+
+<script>
+const poems = [
+  {
+    title: "Мой мир прекрасен",
+    preview: "из радуги, из солнца, из тепла…",
+    text: `Мой мир прекрасен —
+это сказка:
+из радуги,
+из солнца,
+из тепла.
+
+Немножко дождика —
+чтоб омыть тревоги,
+чтоб тише стали
+бури и слова.
+
+Немного ветра —
+чтобы сердце вспомнило 
+все дороги, куда зовёт
+свободная душа.
+
+Чуть-чуть тумана —
+для тайны и загадки,
+чтоб было где
+мечтам рождаться вновь.
+
+И каплю света —
+мягкого и сладкого,
+который
+называются «любовь».`
+  },
+  {
+    title: "Бабочки",
+    preview: "Бабочки летают в животе…",
+    text: `Бабочки летают в животе —
+так щекотно и неловко.
+Посмотрел в глаза ты мне
+с тихой медленной ухмылкой.
+
+Будто знаешь этот тайный знак,
+я скрывать так долго не умею.
+От твоих бездонных глаз
+я и пылаю, и как будто леденею.
+
+Бабочки забились в животе,
+крыльями порхая без устатку.
+Сердце шепчет в тишине,
+словно держит нежную загадку.
+
+И в одном коротком взгляде вдруг
+столько света, трепета и силы…
+Будто мир сомкнулся вокруг нас 
+чтобы на мгновение тихо было.`
+  },
+  {
+    title: "Постой и подними глаза",
+    preview: "Ты видишь это?...",
+    text: `Постой и подними глаза.
+Ты видишь это?
+Мгновение шепчут небеса.
+Художники разлили краски света.
+
+Ты только посмотри на это небо:
+в лучах заката — розовый, пурпурно-алых.
+Голубизною глаз твоих
+расписаны холсты,
+и воспевают их поэты.
+
+Ты просто стой, не шевелись.
+Дыши, вдыхай мгновенье света.
+И мягко солнышка лучи
+пронзают светом.
+Ты видишь это?
+
+А море гладью разлилось.
+Луна, царица, подняла высоко голову свою
+и серебром укрыла лето.
+По волнам поползли лучи,
+барахтаясь в серебряном убранстве.
+
+Ты только посмотри —
+рассыпались по небу бриллианты.
+
+И вот в ночи такой балет.
+Под лунным светом, тихо-тихо,
+запляшут звезды высоко,
+и волны бьются о прибой
+под лунным светом.`
+  },
+  {
+    title: "Мирозданье",
+    preview: "Могучая спираль-пружина мирозданья…",
+    text: `Могучая спираль-пружина мирозданья —
+Понять её так сложно, как ни стремись.
+Она живет за гранью человеческого знанья,
+Где вечность тихо шепчет: «Обернись».
+
+Где звёзды, словно искры из дыханья,
+Летят в безмерность тёмной глубины.
+И каждое мгновенье мирозданья
+Вплетается в узоры тишины.
+
+Мы — только ноты в музыке пространства,
+Короткий вздох среди великих сил.
+Но в нас живёт упрямство постоянства —
+Понять тот смысл, что мир в себе сокрыл.
+
+И пусть пружина времени тугая
+Сжимает дни и отпускает вновь —
+В её витках незримо прорастает
+Надежда, свет… и тихая любовь`
+  },
+  {
+    title: "Мой ангел милый",
+    preview: "Я с тобой — высокой встану горой…",
+    text: `Мой ангел милый, я с тобой —
+Высокой встану я горой,
+Волной могучей океана,
+Вулканом быть — так быть вулканом.
+
+Я стану ветром в непогоду,
+И тихим светом — в темноте.
+Пройду с тобой сквозь все невзгоды,
+Храня тепло в твоей душе.
+
+Когда устанешь — стану силой,
+Когда остынет день — огнём.
+Мой ангел, нежный и любимый,
+Я рядом буду — день за днём.`
+  },
+  {
+    title: "Улыбка",
+    preview: "Какая чудная улыбка…",
+    text: `Какая чудная улыбка —
+Как вам идёт она к лицу.
+Как будто лучик тихо, зыбко
+Коснулся сердца на лету.
+
+В ней столько света и покоя,
+И теплоты живой огонь.
+Она, как утро над рекою,
+Ласкает взгляд и трогает ладонь.
+
+И хочется смотреть подольше,
+Не отводя счастливых глаз…
+Ведь мир становится чуть больше,
+Когда улыбка есть у вас.`
+  },
+  {
+    title: "Минута слабости",
+    preview: "Позволить можно. Нужно позволять…",
+    text: `Минута слабости — раздолье для души.
+Позволить можно.
+Нужно позволять.
+Душе танцоров, что по струнам скачут,
+Разбиться звоном — и опять звучать.
+
+Пусть ветер чувств растреплет тихо мысли,
+Пусть сердце сбросит строгие замки.
+Иногда так важно — быть невыносимо
+Живым среди привычной тишины.
+
+Минута слабости — не признак пораженья,
+А просто вдох, что дан нам на пути.
+Чтобы из трещин хрупкого мгновенья
+Смог новый свет когда-нибудь взойти.`
+  },
+  {
+    title: "Я иду по траве — босой",
+    preview: "Каждый шаг волшебством укутан…",
+    text: `Я иду по траве — босой,
+Каждый шаг волшебством укутан.
+Каждый миг невозможно большой —
+Только кажется, что секунда.
+
+А трава, она так нежна,
+Воздух всюду прохладный и чистый,
+Разбивает оковы сна,
+Оживает всё то, что бездушно.
+
+Ведь огромный наш мир такой —
+Он прекрасен, и миг в каждом шаге.
+Принимаю я всей душой и дыханием эту награду.
+
+Каждый вздох наполняет грудь,
+Словно время течёт иначе.
+И не нужно с пути свернуть —
+Я иду, и внутри всё плачет.
+
+Плачет тихо — от высоты,
+От свободы в мгновеньях летних.
+От того, что сбылись мечты
+В каждом шаге прозрачном и светлом.`
+  },
+  {
+    title: "Тысяча тропинок",
+    preview: "Впереди — не одна тропа…",
+    text: `Впереди — не одна тропа,
+Я из тысячи выберу сердцем.
+Где-то ждёт тишина и живая листва,
+Где-то — люди, что станут мне светом.
+
+Есть пути, где я падаю вниз,
+Обдирая колени о камни.
+Есть пути, где судьба — как каприз,
+Говорит со мной просто и прямо.
+
+Есть дороги, где в душу войдёт
+Нежный свет незаметного счастья.
+Есть тропинки, где кто-то зовёт
+И поделится тёплым участьем.
+
+Будут дни, что ломают спину,
+И ночи, что учат молчанию.
+Будут встречи, что лечат ранимо,
+И слова, что становятся знанием.
+
+И я знаю — не всё легко.
+Жизнь меняет лица и формы.
+Иногда унесёт высоко,
+Иногда поведёт через штормы.
+
+Но я всё же иду… босой.
+С каждым шагом сильнее, честнее.
+С каждой болью — немного иной,
+С каждым чудом — чуть-чуть светлее.
+
+В каждом шаге — дыханье миров,
+В каждом вздохе — их тишина.
+И ведёт меня этот зов
+К той, которой я стану весной.
+
+И пока моё сердце живёт,
+Не сверну, не уйду из света.
+Потому что дорога ведёт
+К той, кем я стану когда-то.`
+  }
+];
+
+function renderPoems() {
+  const list = document.getElementById('poemsList');
+  poems.forEach((poem, i) => {
+    const card = document.createElement('div');
+    card.className = 'poem-card';
+    card.innerHTML = `
+      <div class="poem-header" onclick="togglePoem(this)">
+        <div class="poem-title-wrap">
+          <div class="poem-number">✦ ${String(i+1).padStart(2,'0')}</div>
+          <div class="poem-title">${poem.title}</div>
+          <div class="poem-preview">${poem.preview}</div>
+        </div>
+        <div class="toggle-btn">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 5L7 10L12 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+      <div class="poem-body">
+        <div class="poem-separator"></div>
+        <div class="poem-text">${poem.text}</div>
+      </div>
+    `;
+    list.appendChild(card);
+  });
+}
+
+function togglePoem(header) {
+  const card = header.closest('.poem-card');
+  const isOpen = card.classList.contains('open');
+  // Закрыть все
+  document.querySelectorAll('.poem-card.open').forEach(c => c.classList.remove('open'));
+  // Открыть если было закрыто
+  if (!isOpen) card.classList.add('open');
+}
+
+renderPoems();
+</script>
+</body>
+</html>
